@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ControlActivity" 
+    tools:context="ControlFragment"
     android:orientation="vertical">
-    
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,10 +15,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="현재 상태"/>
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="--------------기준"/>
+            android:text="갱신"
+            android:id="@+id/refresh_btn"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/date_label"
+            android:gravity="right"
+            android:text=""/>
     </LinearLayout>
     <TableLayout
         android:layout_width="match_parent"
@@ -31,7 +39,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/text_temperture"/>
+                android:id="@+id/text_temperature"/>
         </TableRow>
         <TableRow>
             <TextView
@@ -41,7 +49,7 @@
             <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:id="@+id/text_hummidity"/>
+                android:id="@+id/text_humidity"/>
         </TableRow>
         <TableRow>
             <TextView
