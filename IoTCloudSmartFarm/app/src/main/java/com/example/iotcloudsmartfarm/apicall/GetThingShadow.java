@@ -62,10 +62,10 @@ public class GetThingShadow extends GetRequest {
             JSONObject root = new JSONObject(jsonString);
             JSONObject reported = root.getJSONObject("state").getJSONObject("reported");
 
-            String temperature = reported.getString("temperature");
-            String hummidity = reported.getString("humidity");
-            String soilMoisture = reported.getString("soilMoisture");
-            String sunlight = reported.getString("sunlight");
+            String temperature = reported.getString("temperature") + "°C";
+            String hummidity = reported.getString("humidity") + "%";
+            String soilMoisture = reported.getString("soilMoisture") + "%";
+            String sunlight = reported.getString("sunlight") + "%";
             String watermotor = reported.getString("watermotor");
             String sunvisor = reported.getString("sunvisor");
 
