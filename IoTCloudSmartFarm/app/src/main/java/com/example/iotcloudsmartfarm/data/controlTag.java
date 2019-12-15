@@ -1,5 +1,6 @@
 package com.example.iotcloudsmartfarm.data;
 
+//제어 이력 조회를 위한 클래스
 public class controlTag {
     public String dataname;
     public String state;

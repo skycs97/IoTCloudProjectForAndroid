@@ -10,7 +10,9 @@ import android.widget.TextView;
 import com.example.iotcloudsmartfarm.data.controlTag;
 
 import java.util.ArrayList;
-
+/*
+* 제어이력 조회를 위한 ListView의 어댑터
+ */
 public class MyAdapter extends BaseAdapter {
     private ArrayList<controlTag> datas = new ArrayList<>();
 

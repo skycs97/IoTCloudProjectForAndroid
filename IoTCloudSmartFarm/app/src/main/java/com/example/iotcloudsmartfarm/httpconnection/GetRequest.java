@@ -20,7 +20,7 @@ abstract public class GetRequest extends AsyncTask<String, Void, String> {
         this.activity = activity;
     }
 
-
+    //Background 에서 HTTP통신을 통해 받아온 url의 결과를 반환 시켜줌
     @Override
     protected String doInBackground(String... strings) {
         StringBuffer output = new StringBuffer();

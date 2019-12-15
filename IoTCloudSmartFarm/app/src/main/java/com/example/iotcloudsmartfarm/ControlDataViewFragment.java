@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * 디바이스 제어 이력 확인
  */
 public class ControlDataViewFragment extends Fragment {
 
@@ -39,6 +39,7 @@ public class ControlDataViewFragment extends Fragment {
     TextView endDateLabel;
     public ListView listView;
     public ArrayList<controlTag> data;
+    //라디오 버튼을 위한 열거형
     enum Type {WATERMOTOR("워터펌프"), SUNVISOR("차양막") ;
 
         private final  String name;
@@ -49,6 +50,7 @@ public class ControlDataViewFragment extends Fragment {
             return name;
         }
     }
+    //url 주소
     private final static String URL = "https://4xc9g8j5ud.execute-api.ap-northeast-2.amazonaws.com/prod/devices/MyMKRWiFi1010/controldata";
 
     public ControlDataViewFragment() {
@@ -76,10 +78,12 @@ public class ControlDataViewFragment extends Fragment {
 
         Button datechoiceBtn = (Button) view.findViewById(R.id.date_choice_control_btn);
         Button requestBtn = (Button) view.findViewById(R.id.request_control_btn);
-
+        //날짜 선택 버튼 이벤트
+        //시작 날짜 및 시간 dialog 종료 날짜 및 시간 dialog 호출
         datechoiceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //DatePIckerDialog는 날짜 선택을 위해 이용
                 DatePickerDialog.OnDateSetListener startDateSetListener = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
@@ -92,7 +96,8 @@ public class ControlDataViewFragment extends Fragment {
                         endDate += String.format("%d-%d-%d", i, i1+1, i2);
                     }
                 };
-
+                //TimePickerDialog는 시간 선택을 위해 이용
+                //한자리숫자 데이터에 대해서 0을 붙이는 처리 추가
                 TimePickerDialog.OnTimeSetListener startTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
@@ -139,7 +144,7 @@ public class ControlDataViewFragment extends Fragment {
                 endDate = "";
             }
         });
-
+        //조회 버튼이 눌렸을때 로그조회 async실행 및 리스트뷰 그리기 시작
         requestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,7 +152,7 @@ public class ControlDataViewFragment extends Fragment {
                 RadioButton rb = (RadioButton) view.findViewById(rg.getCheckedRadioButtonId());
                 String type = rb.getText().toString();
                 String controlTag = null;
-
+                //라디오 버튼 체크 확인
                 if(type.equals(Type.WATERMOTOR.getName()))
                     controlTag = "watermotor";
                 else if(type.equals(Type.SUNVISOR.getName()))
@@ -156,7 +161,7 @@ public class ControlDataViewFragment extends Fragment {
                     Toast.makeText(getActivity(), "조회할 태그를 골라주세요", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                //리스트뷰 그리기
                 makeList(controlTag);
 
             }
@@ -165,6 +170,7 @@ public class ControlDataViewFragment extends Fragment {
     }
 
     private void makeList(String tagName){
+        //db조회를 위한 asyncTask 실행
         new GetControlLog((MainActivity)getActivity(), this, startDateLabel.getText().toString(), endDateLabel.getText().toString(), URL, tagName).execute();
 
         TextView textView = (TextView) view.findViewById(R.id.log_control_label);

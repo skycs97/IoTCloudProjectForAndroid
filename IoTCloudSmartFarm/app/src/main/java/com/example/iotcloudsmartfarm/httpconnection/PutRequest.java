@@ -22,7 +22,7 @@ public class PutRequest extends AsyncTask<JSONObject, Void, String> {
         this.activity = activity;
     }
 
-
+    //들어온 json 형태의 문자열을 body에 붙여서 전송
     @Override
     protected String doInBackground(JSONObject... postDataParams) {
 

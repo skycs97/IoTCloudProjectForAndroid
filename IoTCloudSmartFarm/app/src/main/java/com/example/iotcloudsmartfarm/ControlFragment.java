@@ -24,7 +24,7 @@ import java.util.Map;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * 디바이스 현재 상태 조회 및 모터 제어 프래그먼트
  */
 public class ControlFragment extends Fragment {
 
@@ -39,7 +39,7 @@ public class ControlFragment extends Fragment {
     private TextView referenceLabel;
 
     public Map<String, String> state;
-
+    //api url정의
     private static final String SHADOWURL = "https://4xc9g8j5ud.execute-api.ap-northeast-2.amazonaws.com/prod/devices/MyMKRWiFi1010";
 
     public ControlFragment() {
@@ -64,9 +64,10 @@ public class ControlFragment extends Fragment {
         sunvisorLabel = (TextView) view.findViewById(R.id.text_sunvisor);
 
         Button refreshButton = (Button) view.findViewById(R.id.refresh_btn);
-
+        //데이터 갱신
         refreshDataDeviceInfo();
 
+        //갱신 버튼 누를시 데이터 갱신
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +78,8 @@ public class ControlFragment extends Fragment {
         Button sunvisorOpenButton = (Button) view.findViewById(R.id.btn_open);
         Button sunvisorHalfOpenButton = (Button) view.findViewById(R.id.btn_halfopen);
         Button sunvisorCloseButton = (Button) view.findViewById(R.id.btn_close);
-
+        //서보모터 제어를 위한 3개의 버튼
+        //각각 OPEN, HALFOPEN, CLOSE를 담당
         sunvisorOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,11 +101,12 @@ public class ControlFragment extends Fragment {
                 sunvisorLabel.setText("CLOSE");
             }
         });
-        refreshDataDeviceInfo();
         return view;
     }
     private void refreshDataDeviceInfo(){
+        //asyncTask시작 (디바이스 섀도우 정보를 가져옴)
         new GetThingShadow((MainActivity)getActivity(), this, SHADOWURL).execute();
+        //현재 시간을 가져와서 label에 set
         Date mDate = new Date(System.currentTimeMillis());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String getTime = "최근 갱신 : " + simpleDateFormat.format(mDate);
@@ -113,6 +116,7 @@ public class ControlFragment extends Fragment {
             clearData();
             return;
         }
+        //가져온 데이터를 바탕으로 라벨 새로고침
         dateLabel.setText(getTime);
         temperatureLabel.setText(state.get("temperature"));
         humidityLabel.setText(state.get("humidity"));
@@ -121,7 +125,7 @@ public class ControlFragment extends Fragment {
         waterMotorLabel.setText(state.get("watermotor"));
         sunvisorLabel.setText(state.get("sunvisor"));
     }
-
+    //라벨 초기화
     private void clearData(){
         dateLabel.setText("");
         temperatureLabel.setText("");
@@ -131,8 +135,9 @@ public class ControlFragment extends Fragment {
         waterMotorLabel.setText("");
         sunvisorLabel.setText("");
     }
-
+    //서보모터 제어버튼 클릭시 호출
     private void setSunVisor(String state){
+        //받아온 값을 바탕으로 json 생성
         JSONObject payload= new JSONObject();
         try{
             JSONObject tag = new JSONObject();
@@ -143,7 +148,7 @@ public class ControlFragment extends Fragment {
         }catch(JSONException e){
             e.printStackTrace();
         }
-
+        //디바이스 상태 변경을 위한 api 호출
         new UpdateShadow(getActivity(), this, SHADOWURL).execute(payload);
     }
 }

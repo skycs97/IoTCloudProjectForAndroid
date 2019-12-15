@@ -18,6 +18,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * 제어 이력 조회를 위한 AsyncTask
+ */
 public class GetControlLog extends GetRequest {
     String urlStr;
     String startTime;
@@ -34,11 +37,12 @@ public class GetControlLog extends GetRequest {
         this.endTime = endTime;
         this.type = type;
     }
-
+    //조회 끝날때 까지 잠시 대기를 위한 progressDialog
     @Override
     protected void onPreExecute(){
         progressDialog = ProgressDialog.show(activity, "그래프 그리는 중", "잠시만 기다려 주세요", true, false);
         try{
+            //api요청을 url형태로 지정
             String params = String.format("?from=%s:00&to=%s:00", startTime, endTime);
             url = new URL(urlStr+params);
         } catch (MalformedURLException e){
@@ -57,14 +61,16 @@ public class GetControlLog extends GetRequest {
             fg.data = null;
             return;
         }
-
+        //결과 데이터를 ArrayList형태로 저장
         ArrayList<controlTag> data = getArrayListFromJSONString(jsonString);
-        MyAdapter myAdapter = new MyAdapter(data);
 
+        //adapter에 데이터 연결
+        MyAdapter myAdapter = new MyAdapter(data);
+        //리스트 뷰에 어댑터 연결 및 구분자 설정
         fg.listView.setAdapter(myAdapter);
         fg.listView.setDividerHeight(5);
     }
-
+    //json형태의 데이터를 ArrayList로 변경후 저장
     protected ArrayList<controlTag> getArrayListFromJSONString(String jsonString){
         ArrayList<controlTag> output = new ArrayList<>();
         try{

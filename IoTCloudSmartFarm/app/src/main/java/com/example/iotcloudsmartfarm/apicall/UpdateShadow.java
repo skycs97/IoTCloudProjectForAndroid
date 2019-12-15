@@ -9,8 +9,12 @@ import com.example.iotcloudsmartfarm.httpconnection.PutRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * 디바이스 상태 변경을 위한 AsynTask
+ */
 public class UpdateShadow extends PutRequest {
     String urlStr;
+    //호출한 프래그먼트 저장
     ControlFragment controlFragment;
     public UpdateShadow(Activity activity, ControlFragment fragment, String urlStr) {
         super(activity);

@@ -1,5 +1,6 @@
 package com.example.iotcloudsmartfarm.data;
 
+//센서 데이터 조회를 위한 클래스
 public class Tag{
     public  String temperature;
     public String humidity;

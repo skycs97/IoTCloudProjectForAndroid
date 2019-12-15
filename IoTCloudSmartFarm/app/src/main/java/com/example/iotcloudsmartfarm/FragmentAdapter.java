@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+//tablayout을 위한 프래그먼트 관리 어댑터
 public class FragmentAdapter extends FragmentPagerAdapter {
     public FragmentAdapter(FragmentManager fm){
         super(fm);
