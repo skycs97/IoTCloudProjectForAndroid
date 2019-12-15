@@ -44,6 +44,7 @@ public class DataViewFragment extends Fragment {
     TextView startDateLabel;
     TextView endDateLabel;
     private final static String URL = "https://4xc9g8j5ud.execute-api.ap-northeast-2.amazonaws.com/prod/devices/MyMKRWiFi1010/data";
+
     public ArrayList<Tag> data;
     enum Type {TEMPERATURE("온도"), HUMIDITY("습도"), SOILHUMIDITY("토양수분량"), SUN("햇빛");
 
