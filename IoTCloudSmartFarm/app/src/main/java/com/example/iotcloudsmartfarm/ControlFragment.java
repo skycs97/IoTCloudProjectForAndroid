@@ -40,7 +40,7 @@ public class ControlFragment extends Fragment {
 
     public Map<String, String> state;
 
-    private static final String SHADOWURL = "https://4xc9g8j5ud.execute-api.ap-northeast-2.amazonaws.com/prod/devices/MyMRKWiFi1010";
+    private static final String SHADOWURL = "https://4xc9g8j5ud.execute-api.ap-northeast-2.amazonaws.com/prod/devices/MyMKRWiFi1010";
 
     public ControlFragment() {
         // Required empty public constructor
@@ -82,20 +82,24 @@ public class ControlFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 setSunVisor("OPEN");
+                sunvisorLabel.setText("OPEN");
             }
         });
         sunvisorHalfOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setSunVisor("HALFOPEN");
+                sunvisorLabel.setText("HALFOPEN");
             }
         });
         sunvisorCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setSunVisor("CLOSE");
+                sunvisorLabel.setText("CLOSE");
             }
         });
+        refreshDataDeviceInfo();
         return view;
     }
     private void refreshDataDeviceInfo(){

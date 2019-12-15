@@ -75,7 +75,7 @@ public class GetThingShadow extends GetRequest {
             output.put("sunlight", sunlight);
             output.put("watermotor", watermotor);
             output.put("sunvisor", sunvisor);
-        }catch(Exception e){
+        }catch(JSONException e){
             e.printStackTrace();
             return null;
         }

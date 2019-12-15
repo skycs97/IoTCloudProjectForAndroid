@@ -30,6 +30,6 @@ public class UpdateShadow extends PutRequest {
 
     @Override
     protected void onPostExecute(String result){
-        Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
     }
 }

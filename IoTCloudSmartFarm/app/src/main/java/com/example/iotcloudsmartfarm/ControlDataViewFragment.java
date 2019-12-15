@@ -37,7 +37,7 @@ public class ControlDataViewFragment extends Fragment {
     String endDate;
     TextView startDateLabel;
     TextView endDateLabel;
-    ListView listView;
+    public ListView listView;
     public ArrayList<controlTag> data;
     enum Type {WATERMOTOR("워터펌프"), SUNVISOR("차양막") ;
 
@@ -77,8 +77,6 @@ public class ControlDataViewFragment extends Fragment {
         Button datechoiceBtn = (Button) view.findViewById(R.id.date_choice_control_btn);
         Button requestBtn = (Button) view.findViewById(R.id.request_control_btn);
 
-        RadioGroup rg = (RadioGroup) view.findViewById(R.id.radioGroup_control);
-
         datechoiceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,32 +96,42 @@ public class ControlDataViewFragment extends Fragment {
                 TimePickerDialog.OnTimeSetListener startTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                        startDate += String.format(" %d:%d", i, i1);
+                        String minute;
+                        if(i1 >=10)
+                            minute = i1+"";
+                        else
+                            minute = "0" + i1;
+                        startDate += String.format(" %d:%s", i, minute);
                         startDateLabel.setText(startDate);
                     }
                 };
                 TimePickerDialog.OnTimeSetListener endTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                        endDate += String.format(" %d:%d", i, i1);
+                        String minute;
+                        if(i1 >=10)
+                            minute = i1+"";
+                        else
+                            minute = "0" + i1;
+                        endDate += String.format(" %d:%s", i, minute);
                         endDateLabel.setText(endDate);
                     }
                 };
 
-                TimePickerDialog endTimePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, endTimeSetListener, 0, 0, false);
+                TimePickerDialog endTimePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, endTimeSetListener, 18, 20, false);
                 endTimePickerDialog.setTitle("종료 시간");
                 endTimePickerDialog.show();
 
-                DatePickerDialog endDateDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, endDateSetListener, 2019, 12, 0);
+                DatePickerDialog endDateDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, endDateSetListener, 2019, 11, 15);
                 endDateDialog.setTitle("종료 날짜");
                 endDateDialog.show();
 
 
-                TimePickerDialog startTimePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, startTimeSetListener, 0, 0, false);
+                TimePickerDialog startTimePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, startTimeSetListener, 18, 10, false);
                 startTimePickerDialog.setTitle("시작 시간");
                 startTimePickerDialog.show();
 
-                DatePickerDialog startDateDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT,startDateSetListener, 2019, 12, 0);
+                DatePickerDialog startDateDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT,startDateSetListener, 2019, 11, 15);
                 startDateDialog.setTitle("시작 날짜");
                 startDateDialog.show();
 
@@ -134,7 +142,8 @@ public class ControlDataViewFragment extends Fragment {
 
         requestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                RadioGroup rg = (RadioGroup) view.findViewById(R.id.radioGroup_control);
                 RadioButton rb = (RadioButton) view.findViewById(rg.getCheckedRadioButtonId());
                 String type = rb.getText().toString();
                 String controlTag = null;
@@ -156,19 +165,16 @@ public class ControlDataViewFragment extends Fragment {
     }
 
     private void makeList(String tagName){
-        new GetControlLog((MainActivity)getActivity(), this, startDateLabel.getText().toString(), endDateLabel.getText().toString(), URL);
-        TextView textView = (TextView) view.findViewById(R.id.log_label);
+        new GetControlLog((MainActivity)getActivity(), this, startDateLabel.getText().toString(), endDateLabel.getText().toString(), URL, tagName).execute();
+
+        TextView textView = (TextView) view.findViewById(R.id.log_control_label);
+
         if(tagName.equals("watermotor")){
             textView.setText("워터 펌프 ");
         }
         else if(tagName.equals("sunvisor")){
             textView.setText("차양막");
         }
-
-        MyAdapter myAdapter = new MyAdapter(data);
-
-        listView.setAdapter(myAdapter);
-        listView.setDividerHeight(5);
     }
 
 }

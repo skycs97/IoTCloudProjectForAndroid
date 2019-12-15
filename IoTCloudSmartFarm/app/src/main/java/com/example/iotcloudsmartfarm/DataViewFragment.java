@@ -45,7 +45,7 @@ public class DataViewFragment extends Fragment {
     TextView endDateLabel;
     private final static String URL = "https://4xc9g8j5ud.execute-api.ap-northeast-2.amazonaws.com/prod/devices/MyMKRWiFi1010/data";
 
-    public ArrayList<Tag> data;
+    public LineChart lineChart;
     enum Type {TEMPERATURE("온도"), HUMIDITY("습도"), SOILHUMIDITY("토양수분량"), SUN("햇빛");
 
         private final  String name;
@@ -75,9 +75,7 @@ public class DataViewFragment extends Fragment {
         endDateLabel = (TextView) view.findViewById(R.id.end_date);
         Button dateChoiceBtn = (Button) view.findViewById(R.id.date_choice_btn);
         Button requestBtn = (Button)view.findViewById(R.id.request_btn);
-
-
-        RadioGroup rg = (RadioGroup) view.findViewById(R.id.radioGroup);
+        lineChart = (LineChart) view.findViewById(R.id.chart);
 
         dateChoiceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,32 +96,42 @@ public class DataViewFragment extends Fragment {
                 TimePickerDialog.OnTimeSetListener startTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                        startDate += String.format(" %d:%d", i, i1);
+                        String minute;
+                        if(i1 >=10)
+                            minute = i1+"";
+                        else
+                            minute = "0" + i1;
+                        startDate += String.format(" %d:%s", i, minute);
                         startDateLabel.setText(startDate);
                     }
                 };
                 TimePickerDialog.OnTimeSetListener endTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                        endDate += String.format(" %d:%d", i, i1);
+                        String minute;
+                        if(i1 >=10)
+                            minute = i1+"";
+                        else
+                            minute = "0" + i1;
+                        endDate += String.format(" %d:%s", i, minute);
                         endDateLabel.setText(endDate);
                     }
                 };
 
-                TimePickerDialog endTimePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, endTimeSetListener, 0, 0, false);
+                TimePickerDialog endTimePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, endTimeSetListener, 18, 20, true);
                 endTimePickerDialog.setTitle("종료 시간");
                 endTimePickerDialog.show();
 
-                DatePickerDialog endDateDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, endDateSetListener, 2019, 12, 0);
+                DatePickerDialog endDateDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, endDateSetListener, 2019, 11, 15);
                 endDateDialog.setTitle("종료 날짜");
                 endDateDialog.show();
 
 
-                TimePickerDialog startTimePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, startTimeSetListener, 0, 0, false);
+                TimePickerDialog startTimePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, startTimeSetListener, 18, 10, true);
                 startTimePickerDialog.setTitle("시작 시간");
                 startTimePickerDialog.show();
 
-                DatePickerDialog startDateDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT,startDateSetListener, 2019, 12, 0);
+                DatePickerDialog startDateDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT,startDateSetListener, 2019, 11, 15);
                 startDateDialog.setTitle("시작 날짜");
                 startDateDialog.show();
 
@@ -136,7 +144,8 @@ public class DataViewFragment extends Fragment {
 
         requestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                RadioGroup rg = (RadioGroup) view.findViewById(R.id.radioGroup);
                 RadioButton rb = (RadioButton) view.findViewById(rg.getCheckedRadioButtonId());
                 String type = rb.getText().toString();
                 String tagName = null;
@@ -165,33 +174,7 @@ public class DataViewFragment extends Fragment {
     }
 
     private void makeGraph(String tagName){
-        new GetLog((MainActivity)getActivity(), this, startDateLabel.getText().toString(), endDateLabel.getText().toString(), URL).execute();
-
-        LineChart lineChart = (LineChart) view.findViewById(R.id.chart);
-        ArrayList<Entry> datas = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
-
-        int length = data.size();
-        for(int i=0; i< length; i++){
-            Tag item = data.get(i);
-            float value = 0.0f;
-            switch (tagName){
-                case "temperature":
-                    value = Float.parseFloat(item.temperature);
-                    break;
-                case "humidity":
-                    value = Float.parseFloat(item.humidity);
-                    break;
-                case "soilMoisture":
-                    value = Float.parseFloat(item.soilMoisture);
-                    break;
-                case "sunlight":
-                    value = Float.parseFloat(item.sunlight);
-                    break;
-            }
-            labels.add(item.timestamp);
-            datas.add(new Entry(length-i-1, value));
-        }
+        new GetLog((MainActivity)getActivity(), this, startDateLabel.getText().toString(), endDateLabel.getText().toString(), tagName ,URL).execute();
 
         TextView textView = (TextView) view.findViewById(R.id.log_label);
         if(tagName.equals("temperature")){
@@ -207,61 +190,9 @@ public class DataViewFragment extends Fragment {
             textView.setText("태양광 - 단위(%)");
         }
 
-        LineDataSet lineDataSet = new LineDataSet(datas, tagName);
-        lineDataSet.setLineWidth(2);
-        lineDataSet.setCircleRadius(6);
-        lineDataSet.setCircleColor(Color.parseColor("#FFA1B4DC"));
-        lineDataSet.setCircleColorHole(Color.BLUE);
-        lineDataSet.setColor(Color.parseColor("#FFA1B4DC"));
-        lineDataSet.setDrawCircleHole(true);
-        lineDataSet.setDrawCircles(true);
-        lineDataSet.setDrawHorizontalHighlightIndicator(false);
-        lineDataSet.setDrawHighlightIndicators(false);
-        lineDataSet.setDrawValues(true);
-
-        LineData lineData = new LineData(lineDataSet);
-        lineChart.setData(lineData);
-
-        //x축 레이블 설정
-        XAxis xAxis = lineChart.getXAxis();
-        xAxis.setValueFormatter(new GraphAxisValueFormatter(labels));
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextColor(Color.BLACK);
-
-        YAxis yLAxis = lineChart.getAxisLeft();
-        yLAxis.setTextColor(Color.BLACK);
-
-
-        YAxis yRAxis = lineChart.getAxisRight();
-        yRAxis.setDrawLabels(false);
-        yRAxis.setDrawAxisLine(false);
-        yRAxis.setDrawGridLines(false);
-
-        Description description = new Description();
-        description.setText(tagName);
-
-        //차트 각종 설정
-        lineChart.setDoubleTapToZoomEnabled(false);
-        lineChart.setDrawGridBackground(false);
-        lineChart.setDescription(description);
-        lineChart.animateXY(2000, 2000 , Easing.EasingOption.EaseInCubic, Easing.EasingOption.EaseInCubic);
-        lineChart.invalidate();
-        lineChart.getMarker();
-        lineChart.setDrawMarkers(true);
     }
 
-    public class GraphAxisValueFormatter implements IAxisValueFormatter {
-        private ArrayList<String> mValues;
-        // 생성자 초기화
-        GraphAxisValueFormatter(ArrayList<String> values){
-            mValues = values;
-        }
 
-        @Override
-        public String getFormattedValue(float value, AxisBase axis){
-            return mValues.get((int)value);
-        }
-    }
 
 
 }

@@ -6,6 +6,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.iotcloudsmartfarm.ControlDataViewFragment;
+import com.example.iotcloudsmartfarm.MyAdapter;
 import com.example.iotcloudsmartfarm.data.Tag;
 import com.example.iotcloudsmartfarm.data.controlTag;
 import com.example.iotcloudsmartfarm.httpconnection.GetRequest;
@@ -23,13 +24,15 @@ public class GetControlLog extends GetRequest {
     String endTime;
     ProgressDialog progressDialog;
     ControlDataViewFragment fg;
+    String type;
 
-    public GetControlLog(Activity activity, ControlDataViewFragment fragment, String startTime, String endTime, String urlStr){
+    public GetControlLog(Activity activity, ControlDataViewFragment fragment, String startTime, String endTime, String urlStr, String type){
         super(activity);
         this.urlStr = urlStr;
         fg = fragment;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.type = type;
     }
 
     @Override
@@ -45,6 +48,10 @@ public class GetControlLog extends GetRequest {
 
     @Override
     protected void onPostExecute(String jsonString){
+        if(progressDialog != null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
         if(jsonString == null){
             Toast.makeText(activity, "데이터를 가져오는데 실패하였습니다", Toast.LENGTH_SHORT).show();
             fg.data = null;
@@ -52,7 +59,10 @@ public class GetControlLog extends GetRequest {
         }
 
         ArrayList<controlTag> data = getArrayListFromJSONString(jsonString);
-        fg.data = data;
+        MyAdapter myAdapter = new MyAdapter(data);
+
+        fg.listView.setAdapter(myAdapter);
+        fg.listView.setDividerHeight(5);
     }
 
     protected ArrayList<controlTag> getArrayListFromJSONString(String jsonString){
@@ -71,7 +81,8 @@ public class GetControlLog extends GetRequest {
                         jsonObject.getString("state"),
                         jsonObject.getString("timestamp"));
 
-                output.add(thing);
+                if(jsonObject.getString("dataname").equals(type))
+                    output.add(thing);
             }
         }catch (Exception e){
             e.printStackTrace();
