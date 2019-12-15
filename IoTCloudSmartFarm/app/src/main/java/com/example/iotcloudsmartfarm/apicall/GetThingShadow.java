@@ -36,7 +36,6 @@ public class GetThingShadow extends GetRequest {
         } catch (MalformedURLException e){
             Toast.makeText(activity, "오류 발생 : " + urlStr, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
-            activity.finish();
         }
     }
 

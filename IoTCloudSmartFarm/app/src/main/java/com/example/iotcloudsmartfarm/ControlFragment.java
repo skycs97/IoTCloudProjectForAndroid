@@ -13,6 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.iotcloudsmartfarm.apicall.GetThingShadow;
+import com.example.iotcloudsmartfarm.apicall.UpdateShadow;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,7 +40,7 @@ public class ControlFragment extends Fragment {
 
     public Map<String, String> state;
 
-    private static final String THINGSHADOWURL = "https://4xc9g8j5ud.execute-api.ap-northeast-2.amazonaws.com/prod/devices/MyMRKWiFi1010";
+    private static final String SHADOWURL = "https://4xc9g8j5ud.execute-api.ap-northeast-2.amazonaws.com/prod/devices/MyMRKWiFi1010";
 
     public ControlFragment() {
         // Required empty public constructor
@@ -70,12 +74,32 @@ public class ControlFragment extends Fragment {
             }
         });
 
+        Button sunvisorOpenButton = (Button) view.findViewById(R.id.btn_open);
+        Button sunvisorHalfOpenButton = (Button) view.findViewById(R.id.btn_halfopen);
+        Button sunvisorCloseButton = (Button) view.findViewById(R.id.btn_close);
 
-
+        sunvisorOpenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSunVisor("OPEN");
+            }
+        });
+        sunvisorHalfOpenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSunVisor("HALFOPEN");
+            }
+        });
+        sunvisorCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSunVisor("CLOSE");
+            }
+        });
         return view;
     }
     private void refreshDataDeviceInfo(){
-        new GetThingShadow(getActivity(), this, THINGSHADOWURL).execute();
+        new GetThingShadow(getActivity(), this, SHADOWURL).execute();
         Date mDate = new Date(System.currentTimeMillis());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String getTime = "최근 갱신 : " + simpleDateFormat.format(mDate);
@@ -102,5 +126,20 @@ public class ControlFragment extends Fragment {
         sunLightLabel.setText("");
         waterMotorLabel.setText("");
         sunvisorLabel.setText("");
+    }
+
+    private void setSunVisor(String state){
+        JSONObject payload= new JSONObject();
+        try{
+            JSONObject tag = new JSONObject();
+            tag.put("tagName", "sunvisor");
+            tag.put("tagValue", state);
+
+            payload.put("tag", tag);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
+        new UpdateShadow(getActivity(), this, SHADOWURL).execute(payload);
     }
 }
