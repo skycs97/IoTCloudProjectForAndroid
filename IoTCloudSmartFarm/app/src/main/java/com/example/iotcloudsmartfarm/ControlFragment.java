@@ -99,7 +99,7 @@ public class ControlFragment extends Fragment {
         return view;
     }
     private void refreshDataDeviceInfo(){
-        new GetThingShadow(getActivity(), this, SHADOWURL).execute();
+        new GetThingShadow((MainActivity)getActivity(), this, SHADOWURL).execute();
         Date mDate = new Date(System.currentTimeMillis());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String getTime = "최근 갱신 : " + simpleDateFormat.format(mDate);
