@@ -9,6 +9,6 @@ TabLayout과 ViewPager를 이용하여 3개의 Fragment를 하나의 액티비�
 디바이스 제어 이력 데이터 조회
 
 
-
-## MPAndroidChart
+## 사용 외부 라이브러리
+#### MPAndroidChart
 https://github.com/PhilJay/MPAndroidChart
